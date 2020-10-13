@@ -27,13 +27,13 @@ set(CMAKE_STATIC_LIBRARY_PREFIX "lib")
 set(CMAKE_STATIC_LIBRARY_SUFFIX ".a")
 set(CMAKE_EXECUTABLE_SUFFIX ".elf")
 
-# Get environment variables
-set(RTK $ENV{RTK} CACHE STRING
-  "Location of rt-kernel tree")
-set(COMPILERS $ENV{COMPILERS} CACHE STRING
-  "Location of compiler toolchain")
-set(BSP $ENV{BSP} CACHE STRING
-  "The name of the BSP to build for")
+# Add machine-specific flags
+add_definitions(${MACHINE})
+add_link_options(${MACHINE})
+
+if (NOT ${VARIANT} STREQUAL "")
+  add_definitions(-D${VARIANT})
+endif()
 
 # Common flags
 add_definitions(
@@ -44,39 +44,53 @@ add_definitions(
   )
 
 # Common includes
-include_directories(
+list (APPEND INCLUDES
   ${RTK}/bsp/${BSP}/include
   ${RTK}/include
   ${RTK}/include/arch/${ARCH}
   ${RTK}/lwip/src/include
   )
+set(CMAKE_C_STANDARD_INCLUDE_DIRECTORIES ${INCLUDES})
+set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES ${INCLUDES})
 
-link_libraries(
-  ${BSP}
-  ${ARCH}
-  kern
-  dev
-  sio
-  block
-  fs
-  usb
-  lwip
-  ptpd
-  eth
-  i2c
-  rtc
-  can
-  nand
-  spi
-  nor
-  pwm
-  adc
-  trace
-  counter
-  shell
-  lua
+# Linker flags
+add_link_options(
+  -L${RTK}/lib/${ARCH}/${VARIANT}/${CPU}/
+  -T${RTK}/bsp/${BSP}/${BSP}.ld
+  -Wl,--gc-sections
   )
 
-set(CMAKE_CXX_LINK_EXECUTABLE "<CMAKE_CXX_COMPILER> <FLAGS> <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> -nostartfiles -L${RTK}/lib/${ARCH}/${VARIANT}/${CPU} -T${RTK}/bsp/${BSP}/${BSP}.ld -Wl,-Map=<TARGET>.map -Wl,--gc-sections -Wl,--start-group <LINK_LIBRARIES> -lstdc++ -lc -lm -Wl,--end-group")
-
-set(CMAKE_C_LINK_EXECUTABLE   "<CMAKE_C_COMPILER>   <FLAGS> <CMAKE_C_LINK_FLAGS>   <LINK_FLAGS> <OBJECTS> -o <TARGET> -nostartfiles -L${RTK}/lib/${ARCH}/${VARIANT}/${CPU} -T${RTK}/bsp/${BSP}/${BSP}.ld -Wl,-Map=<TARGET>.map -Wl,--gc-sections -Wl,--start-group <LINK_LIBRARIES> -lc -lm -Wl,--end-group")
+# Libraries
+list (APPEND LIBS
+  -Wl,--start-group
+  -l${BSP}
+  -l${ARCH}
+  -lkern
+  -ldev
+  -lsio
+  -lblock
+  -lfs
+  -lusb
+  -llwip
+  -lptpd
+  -leth
+  -li2c
+  -lrtc
+  -lcan
+  -lnand
+  -lspi
+  -lnor
+  -lpwm
+  -ladc
+  -ldac
+  -ltrace
+  -lcounter
+  -lshell
+  -llua
+  -lc
+  -lm
+  -Wl,--end-group
+  )
+list(JOIN LIBS " " LIBS) # Convert list to space separated string
+set(CMAKE_C_STANDARD_LIBRARIES ${LIBS})
+set(CMAKE_CXX_STANDARD_LIBRARIES "${LIBS} -lstdc++")
