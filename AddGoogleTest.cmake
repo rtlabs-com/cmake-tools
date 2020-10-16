@@ -1,80 +1,39 @@
-#
-#
-# Downloads GTest and provides a helper macro to add tests. Add make check, as well, which
-# gives output on failed tests without having to set an environment variable.
-#
-#
+
+cmake_minimum_required(VERSION 3.14)
+
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
-if(CMAKE_VERSION VERSION_LESS 3.11)
-  set(UPDATE_DISCONNECTED_IF_AVAILABLE "UPDATE_DISCONNECTED 1")
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+#  GIT_REPOSITORY      https://github.com/google/googletest.git
+#  GIT_TAG             release-1.10.0
+  GIT_REPOSITORY      https://github.com/rtlabs-com/googletest.git
+  GIT_TAG             cc602bd729c3acd610c3de5d65d1f1d598c41522
+  )
+FetchContent_MakeAvailable(googletest)
 
-  include(DownloadProject)
-  download_project(PROJ googletest
-    GIT_REPOSITORY      https://github.com/rtlabs-com/googletest.git
-    GIT_TAG             cc602bd729c3acd610c3de5d65d1f1d598c41522
-    UPDATE_DISCONNECTED 1
-    QUIET
-    )
-
-  # CMake warning suppression will not be needed in version 1.9
-  set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE BOOL "")
-  add_subdirectory(${googletest_SOURCE_DIR} ${googletest_SOURCE_DIR} EXCLUDE_FROM_ALL)
-  unset(CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
-else()
-  include(FetchContent)
-  FetchContent_Declare(googletest
-    GIT_REPOSITORY      https://github.com/rtlabs-com/googletest.git
-    GIT_TAG             cc602bd729c3acd610c3de5d65d1f1d598c41522)
-  FetchContent_GetProperties(googletest)
-  if(NOT googletest_POPULATED)
-    FetchContent_Populate(googletest)
-    set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE BOOL "")
-    add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR} EXCLUDE_FROM_ALL)
-    unset(CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
-  endif()
-endif()
-
-
-if(CMAKE_CONFIGURATION_TYPES)
-  add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND}
-    --force-new-ctest-process --output-on-failure
-    --build-config "$<CONFIGURATION>")
-else()
-  add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND}
-    --force-new-ctest-process --output-on-failure)
-endif()
+add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND}
+  --force-new-ctest-process
+  --output-on-failure
+  --build-config "$<CONFIGURATION>")
 set_target_properties(check PROPERTIES FOLDER "Scripts")
 
-#include_directories(${gtest_SOURCE_DIR}/include)
-
-# More modern way to do the last line, less messy but needs newish CMake:
-# target_include_directories(gtest INTERFACE ${gtest_SOURCE_DIR}/include)
-
-
 if(GOOGLE_TEST_INDIVIDUAL)
-  if(NOT CMAKE_VERSION VERSION_LESS 3.9)
-    include(GoogleTest)
-  else()
-    set(GOOGLE_TEST_INDIVIDUAL OFF)
-  endif()
+  include(GoogleTest)
 endif()
 
-# Target must already exist
 macro(add_gtest TESTNAME)
-  target_link_libraries(${TESTNAME} PUBLIC gtest gmock gtest_main)
+  target_link_libraries(${TESTNAME} PUBLIC gtest)
+
+  if (BUILD_GMOCK)
+    target_link_libraries(${TESTNAME} PUBLIC gmock)
+  endif()
 
   if(GOOGLE_TEST_INDIVIDUAL)
-    if(CMAKE_VERSION VERSION_LESS 3.10)
-      gtest_add_tests(TARGET ${TESTNAME}
-        TEST_PREFIX "${TESTNAME}."
-        TEST_LIST TmpTestList)
-      set_tests_properties(${TmpTestList} PROPERTIES FOLDER "Tests")
-    else()
-      gtest_discover_tests(${TESTNAME}
-        TEST_PREFIX "${TESTNAME}."
-        PROPERTIES FOLDER "Tests")
-    endif()
+    gtest_discover_tests(${TESTNAME}
+      TEST_PREFIX "${TESTNAME}."
+      PROPERTIES FOLDER "Tests")
   else()
     add_test(${TESTNAME} ${TESTNAME})
     set_target_properties(${TESTNAME} PROPERTIES FOLDER "Tests")
@@ -93,5 +52,10 @@ mark_as_advanced(
   BUILD_GTEST
   )
 
-set_target_properties(gtest gtest_main gmock gmock_main
+set_target_properties(gtest gtest_main
   PROPERTIES FOLDER "Extern")
+
+if(BUILD_GMOCK)
+  set_target_properties(gmock gmock_main
+    PROPERTIES FOLDER "Extern")
+endif()
