@@ -22,7 +22,7 @@ if (NOT Osal_FOUND)
   FetchContent_Declare(
     Osal
     GIT_REPOSITORY      https://github.com/rtlabs-com/osal.git
-    GIT_TAG             c88f6bd
+    GIT_TAG             34fe1cc
     )
   FetchContent_MakeAvailable(Osal)
 endif()
