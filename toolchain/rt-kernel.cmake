@@ -59,6 +59,10 @@ set(CROSS_GCC ${CMAKE_MATCH_1} CACHE STRING "")
 # Set cross-compiler toolchain
 set(CMAKE_C_COMPILER ${COMPILERS}/${CROSS_GCC}/bin/${CROSS_GCC}-gcc)
 set(CMAKE_CXX_COMPILER ${CMAKE_C_COMPILER})
+if(CMAKE_HOST_WIN32)
+  set(CMAKE_C_COMPILER ${CMAKE_C_COMPILER}.exe)
+  set(CMAKE_CXX_COMPILER ${CMAKE_CXX_COMPILER}.exe)
+endif(CMAKE_HOST_WIN32)
 
 # Set cross-compiler machine-specific flags
 include(toolchain/${CPU})
