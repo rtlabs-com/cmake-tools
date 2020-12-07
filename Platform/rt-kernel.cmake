@@ -57,6 +57,7 @@ list (APPEND INCLUDES
   ${RTK}/bsp/${BSP}/include
   ${RTK}/include
   ${RTK}/include/arch/${ARCH}
+  ${RTK}/include/drivers
   ${RTK}/lwip/src/include
   )
 set(CMAKE_ASM_STANDARD_INCLUDE_DIRECTORIES ${INCLUDES})
