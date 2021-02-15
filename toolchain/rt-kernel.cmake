@@ -13,6 +13,30 @@
 # full license information.
 #*******************************************************************/
 
+#[=======================================================================[.rst:
+rt-kernel toolchain
+-------------------
+
+The following environment variables must be set when cmake
+configuration is invoked::
+
+  RTK           - Location of rt-kernel tree
+  BSP           - Name of Board Support Package
+
+The following environment variables are optional::
+
+  COMPILERS     - Compiler search path, defaults to /opt/rt-tools/compilers
+
+Your CMAKE_MODULE_PATH must also be configured so that
+Platform/rt-kernel.cmake can be found.
+
+Example to build for the xmc48relax board::
+
+  RTK=/path/to/rt-kernel BSP=xmc48relax cmake \
+     -B build.xmc48relax \
+     -DCMAKE_TOOLCHAIN_FILE=/path/to/rt-kernel.cmake
+#]=======================================================================]
+
 include_guard()
 
 # The name of the target operating system
