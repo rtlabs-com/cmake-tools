@@ -7,20 +7,16 @@ include(FetchContent)
 FetchContent_Declare(
   googletest
   GIT_REPOSITORY      https://github.com/rtlabs-com/googletest.git
-  GIT_TAG             4847f25e50fc6d488bf202292c9f5745bd4fe7bb
+  GIT_TAG             25808659d317cb03409e7949914b274e10e6824f
   )
 FetchContent_GetProperties(googletest)
 if(NOT googletest_POPULATED)
   FetchContent_Populate(googletest)
-  set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE BOOL "")
-  set(CMAKE_WARN_DEPRECATED 0)
   set(INSTALL_GTEST OFF CACHE BOOL "")
   add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR} EXCLUDE_FROM_ALL)
   if (CMAKE_SYSTEM_NAME STREQUAL rt-kernel)
     target_compile_options(gtest PRIVATE -D_POSIX_C_SOURCE=200809L -Wno-psabi)
   endif()
-  unset(CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
-  unset(CMAKE_WARN_DEPRECATED)
 endif()
 
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND}
