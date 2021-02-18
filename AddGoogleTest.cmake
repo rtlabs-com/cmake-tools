@@ -1,6 +1,12 @@
 
 cmake_minimum_required(VERSION 3.14)
 
+if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0)
+  # gtest doesn't build on older GCC
+  message(FATAL_ERROR
+    "GTest needs at least GCC version 5. Set BUILD_TESTING=OFF to disable tests.")
+endif()
+
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
 include(FetchContent)
