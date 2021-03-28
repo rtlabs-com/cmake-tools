@@ -8,6 +8,9 @@ if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0)
 endif()
 
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+if (CMAKE_SYSTEM_NAME STREQUAL rt-kernel)
+  set(gtest_disable_pthreads ON CACHE BOOL "" FORCE)
+endif()
 
 include(FetchContent)
 FetchContent_Declare(
