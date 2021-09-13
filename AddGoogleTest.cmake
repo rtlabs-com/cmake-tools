@@ -10,6 +10,18 @@ endif()
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 if (CMAKE_SYSTEM_NAME STREQUAL rt-kernel)
   set(gtest_disable_pthreads ON CACHE BOOL "" FORCE)
+  list(APPEND GTEST_COMPILE_OPTIONS
+    -D_POSIX_C_SOURCE=200809L
+    -Wno-psabi
+    )
+endif()
+if (CMAKE_SYSTEM_NAME STREQUAL STM32Cube)
+  set(gtest_disable_pthreads ON CACHE BOOL "" FORCE)
+  list(APPEND GTEST_COMPILE_OPTIONS
+    -D_POSIX_C_SOURCE=200809L
+    -Wno-psabi
+     -D_POSIX_PATH_MAX=80
+    )
 endif()
 
 include(FetchContent)
@@ -23,9 +35,7 @@ if(NOT googletest_POPULATED)
   FetchContent_Populate(googletest)
   set(INSTALL_GTEST OFF CACHE BOOL "")
   add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR} EXCLUDE_FROM_ALL)
-  if (CMAKE_SYSTEM_NAME STREQUAL rt-kernel)
-    target_compile_options(gtest PRIVATE -D_POSIX_C_SOURCE=200809L -Wno-psabi)
-  endif()
+  target_compile_options(gtest PRIVATE ${GTEST_COMPILE_OPTIONS})
 endif()
 
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND}
