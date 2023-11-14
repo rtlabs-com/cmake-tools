@@ -45,7 +45,7 @@ if (NOT TARGET osal)
     FetchContent_Declare(
       osal
       GIT_REPOSITORY      https://github.com/rtlabs-com/osal.git
-      GIT_TAG             552713d
+      GIT_TAG             57b4ae2
       )
     FetchContent_GetProperties(osal)
     if(NOT osal_POPULATED)
