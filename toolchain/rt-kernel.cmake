@@ -48,15 +48,22 @@ if (NOT DEFINED ENV{COMPILERS})
 endif()
 
 # Get environment variables
-set(RTK $ENV{RTK} CACHE STRING
+set(RTK $ENV{RTK} CACHE PATH
   "Location of rt-kernel tree")
-set(COMPILERS $ENV{COMPILERS} CACHE STRING
+set(COMPILERS $ENV{COMPILERS} CACHE PATH
   "Location of compiler toolchain")
 set(BSP $ENV{BSP} CACHE STRING
   "The name of the BSP to build for")
 
+if (NOT DEFINED ENV{BSP_DIR})
+  set(ENV{BSP_DIR} ${RTK}/bsp/${BSP})
+endif()
+
+set(BSP_DIR $ENV{BSP_DIR} CACHE PATH
+  "The location of the BSP to build for, may be out-of-tree from the rt-kernel")
+
 # Check that bsp.mk exists
-set(BSP_MK_FILE ${RTK}/bsp/${BSP}/${BSP}.mk)
+set(BSP_MK_FILE ${BSP_DIR}/${BSP}.mk)
 if (NOT EXISTS ${BSP_MK_FILE})
   message(FATAL_ERROR "Failed to open ${BSP_MK_FILE}")
 endif()
@@ -79,6 +86,13 @@ set(VARIANT ${CMAKE_MATCH_1} CACHE STRING "")
 # Get CROSS_GCC
 string(REGEX MATCH "CROSS_GCC=([A-Za-z0-9_\-]*)" _ ${BSP_MK})
 set(CROSS_GCC ${CMAKE_MATCH_1} CACHE STRING "")
+
+if (NOT DEFINED ENV{BSP_LIBDIR})
+  set(ENV{BSP_DIR} ${RTK}/lib/${ARCH}/${VARIANT}/${CPU})
+endif()
+
+set(BSP_LIBDIR $ENV{BSP_LIBDIR} CACHE PATH
+  "The location of the BSP library, may be out-of-tree from the rt-kernel")
 
 # Set cross-compiler toolchain
 set(CMAKE_C_COMPILER ${COMPILERS}/${CROSS_GCC}/bin/${CROSS_GCC}-gcc)

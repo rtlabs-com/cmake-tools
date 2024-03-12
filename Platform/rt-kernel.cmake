@@ -54,7 +54,7 @@ add_definitions(
 
 # Common includes
 list (APPEND INCLUDES
-  ${RTK}/bsp/${BSP}/include
+  ${BSP_DIR}/include
   ${RTK}/include
   ${RTK}/include/arch/${ARCH}
   ${RTK}/lwip/src/include
@@ -67,7 +67,8 @@ set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES ${INCLUDES})
 add_link_options(
   -nostartfiles
   -L${RTK}/lib/${ARCH}/${VARIANT}/${CPU}
-  -T${RTK}/bsp/${BSP}/${BSP}.ld
+  -L${BSP_LIBDIR}
+  -T${BSP_DIR}/${BSP}.ld
   -Wl,--gc-sections
   )
 
@@ -93,7 +94,6 @@ list (APPEND LIBS
   -lpwm
   -ladc
   -ldac
-  -ltrace
   -lcounter
   -lshell
   -llua
