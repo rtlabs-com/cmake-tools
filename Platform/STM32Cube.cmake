@@ -75,6 +75,6 @@ set(CMAKE_CXX_STANDARD_LIBRARIES "${LIBS} -lstdc++")
 macro(generate_bin TARGET)
   add_custom_command(TARGET ${TARGET} POST_BUILD
     COMMAND ${OBJCOPY}
-    ARGS -O binary ${TARGET}.elf ${TARGET}.bin
+    ARGS -O binary $<TARGET_FILE:${TARGET}> $<TARGET_FILE_DIR:${TARGET}>/$<TARGET_FILE_BASE_NAME:${TARGET}>.bin
     )
 endmacro()
