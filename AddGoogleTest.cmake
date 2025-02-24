@@ -29,14 +29,13 @@ FetchContent_Declare(
   googletest
   GIT_REPOSITORY      https://github.com/rtlabs-com/googletest.git
   GIT_TAG             25808659d317cb03409e7949914b274e10e6824f
+  EXCLUDE_FROM_ALL
   )
-FetchContent_GetProperties(googletest)
-if(NOT googletest_POPULATED)
-  FetchContent_Populate(googletest)
-  set(INSTALL_GTEST OFF CACHE BOOL "")
-  add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR} EXCLUDE_FROM_ALL)
-  target_compile_options(gtest PRIVATE ${GTEST_COMPILE_OPTIONS})
-endif()
+
+set(INSTALL_GTEST OFF CACHE BOOL "")
+FetchContent_MakeAvailable(googletest)
+
+target_compile_options(gtest PRIVATE ${GTEST_COMPILE_OPTIONS})
 
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND}
   --force-new-ctest-process
