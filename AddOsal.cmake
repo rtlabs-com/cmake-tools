@@ -46,15 +46,13 @@ if (NOT TARGET osal)
       osal
       GIT_REPOSITORY      https://github.com/rtlabs-com/osal.git
       GIT_TAG             57b4ae2
+      EXCLUDE_FROM_ALL
       )
-    FetchContent_GetProperties(osal)
-    if(NOT osal_POPULATED)
-      FetchContent_Populate(osal)
-      set(BUILD_SHARED_LIBS_OLD ${BUILD_SHARED_LIBS})
-      set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "" FORCE)
-      add_subdirectory(${osal_SOURCE_DIR} ${osal_BINARY_DIR} EXCLUDE_FROM_ALL)
-      set(BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS_OLD} CACHE BOOL "" FORCE)
-    endif()
+
+    set(BUILD_SHARED_LIBS_OLD ${BUILD_SHARED_LIBS})
+    set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "" FORCE)
+    FetchContent_MakeAvailable(osal)
+    set(BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS_OLD} CACHE BOOL "" FORCE)
 
     # Hide Osal_DIR to avoid confusion, as it is not used in this
     # configuration
