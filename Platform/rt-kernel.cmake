@@ -14,7 +14,7 @@
 #*******************************************************************/
 
 include_guard()
-cmake_minimum_required (VERSION 3.1.2)
+cmake_minimum_required (VERSION 3.28)
 
 # Avoid warning when re-running cmake
 set(DUMMY ${CMAKE_TOOLCHAIN_FILE})

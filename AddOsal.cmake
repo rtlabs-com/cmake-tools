@@ -33,7 +33,7 @@
 # Finally, if OSAL is not found in the system it will be downloaded
 # and built automatically.
 
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.28)
 
 if (NOT TARGET osal)
   # Attempt to find externally built OSAL
