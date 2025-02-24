@@ -28,7 +28,7 @@ include(FetchContent)
 FetchContent_Declare(
   googletest
   GIT_REPOSITORY      https://github.com/rtlabs-com/googletest.git
-  GIT_TAG             25808659d317cb03409e7949914b274e10e6824f
+  GIT_TAG             a0aa198b445e51f3d498b1603a6926abc0c244f6 # rt-labs/v1.14.0
   EXCLUDE_FROM_ALL
   )
 
