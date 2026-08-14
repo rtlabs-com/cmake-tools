@@ -45,7 +45,7 @@ if (NOT TARGET osal)
     FetchContent_Declare(
       osal
       GIT_REPOSITORY      https://github.com/rtlabs-com/osal.git
-      GIT_TAG             4664224
+      GIT_TAG             5ec7b7e
       EXCLUDE_FROM_ALL
       )
 
